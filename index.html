@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ROMEL — Command</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080C12;
+      --surface: #0D1117;
+      --panel: #131922;
+      --accent: #3D8EF0;
+      --accent-dim: #1E4A8A;
+      --accent-faint: #0D2040;
+      --text: #F0EEE9;
+      --text-secondary: #9BA3AF;
+      --text-muted: #4B5563;
+      --border: #161D28;
+      --border-mid: #1F2937;
+      --border-bright: #2D3B4E;
+      --radius: 0;
+      --space: 8px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      max-width: 430px;
+      min-height: 100%;
+      margin: 0 auto;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+    }
+
+    /* Status bar */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: calc(var(--space) * 1.5) calc(var(--space) * 2);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .status-brand {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      color: var(--text);
+    }
+
+    .status-meta {
+      display: flex;
+      align-items: center;
+      gap: calc(var(--space) * 1.5);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .verification {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 8px;
+      border: 1px solid var(--accent);
+      background: var(--accent-faint);
+      color: var(--text);
+    }
+
+    .verification::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      background: var(--accent);
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+
+    /* Hero */
+    .hero {
+      padding: calc(var(--space) * 4) calc(var(--space) * 2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-secondary);
+      margin-bottom: calc(var(--space) * 1.5);
+    }
+
+    .hero h1 {
+      font-family: 'Inter', sans-serif;
+      font-size: 28px;
+      font-weight: 300;
+      line-height: 1.2;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      margin-bottom: calc(var(--space) * 1.5);
+    }
+
+    .hero p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      max-width: 280px;
+    }
+
+    /* Sections */
+    .section {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: calc(var(--space) * 1.5) calc(var(--space) * 2);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-secondary);
+    }
+
+    .section-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* Agent list */
+    .agent-list {
+      list-style: none;
+    }
+
+    .agent-item {
+      display: flex;
+      align-items: center;
+      gap: calc(var(--space) * 1.5);
+      padding: calc(var(--space) * 1.5) calc(var(--space) * 2);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      transition: background 0.12s ease;
+    }
+
+    .agent-item:last-child {
+      border-bottom: none;
+    }
+
+    .agent-item:active {
+      background: var(--surface);
+    }
+
+    .agent-avatar {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      background: var(--panel);
+      border: 1px solid var(--border-mid);
+      flex-shrink: 0;
+    }
+
+    .agent-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .agent-name {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .agent-role {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .agent-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .agent-status.live {
+      color: var(--text-secondary);
+    }
+
+    .agent-status.live::before {
+      background: var(--accent);
+    }
+
+    .agent-status::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      background: var(--text-muted);
+    }
+
+    /* Operations feed */
+    .feed {
+      list-style: none;
+      padding: calc(var(--space) * 1) 0;
+    }
+
+    .feed-item {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: calc(var(--space) * 1.5);
+      padding: calc(var(--space) * 1.5) calc(var(--space) * 2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .feed-item:last-child {
+      border-bottom: none;
+    }
+
+    .feed-time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding-top: 2px;
+    }
+
+    .feed-body {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .feed-agent {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+    }
+
+    .feed-action {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    /* CTA area */
+    .cta-area {
+      margin-top: auto;
+      padding: calc(var(--space) * 2);
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .cta-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: calc(var(--space) * 1.75) calc(var(--space) * 2);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text);
+      background: var(--accent-faint);
+      border: 1px solid var(--accent);
+      cursor: pointer;
+      transition: background 0.12s ease, border-color 0.12s ease;
+    }
+
+    .cta-button:hover {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+    }
+
+    .cta-button:active {
+      background: var(--accent-faint);
+    }
+
+    .cta-note {
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-top: calc(var(--space) * 1.5);
+    }
+
+    /* Desktop framing */
+    @media (min-width: 431px) {
+      body {
+        background: #05070a;
+      }
+      .app {
+        min-height: 100vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app" role="main" aria-label="ROMEL command center">
+    <header class="status-bar">
+      <div class="status-brand">ROMEL</div>
+      <div class="status-meta">
+        <span class="verification">Verifying</span>
+        <span>09:41</span>
+      </div>
+    </header>
+
+    <section class="hero" aria-label="System overview">
+      <div class="hero-label">Command // Pre-authentication</div>
+      <h1>Ten agents.<br>One access point.</h1>
+      <p>Private command centre for the ROMEL agent roster. Access is restricted pending verification.</p>
+    </section>
+
+    <section class="section" aria-labelledby="agents-title">
+      <div class="section-header">
+        <h2 id="agents-title" class="section-title">Agent Roster</h2>
+        <span class="section-count">10 Units</span>
+      </div>
+      <ul class="agent-list">
+        <li class="agent-item">
+          <div class="agent-avatar">AT</div>
+          <div class="agent-info">
+            <div class="agent-name">Atlas</div>
+            <div class="agent-role">Orchestration</div>
+          </div>
+          <div class="agent-status">Planned</div>
+        </li>
+        <li class="agent-item">
+          <div class="agent-avatar">GR</div>
+          <div class="agent-info">
+            <div class="agent-name">Grace</div>
+            <div class="agent-role">Comms / Email</div>
+          </div>
+          <div class="agent-status live">Live</div>
+        </li>
+        <li class="agent-item">
+          <div class="agent-avatar">NO</div>
+          <div class="agent-info">
+            <div class="agent-name">Noah</div>
+            <div class="agent-role">Ideas / Capture</div>
+          </div>
+          <div class="agent-status live">Live</div>
+        </li>
+        <li class="agent-item">
+          <div class="agent-avatar">MI</div>
+          <div class="agent-info">
+            <div class="agent-name">Mia</div>
+            <div class="agent-role">Design / Interface</div>
+          </div>
+          <div class="agent-status live">Live</div>
+        </li>
+        <li class="agent-item">
+          <div class="agent-avatar">TO</div>
+          <div class="agent-info">
+            <div class="agent-name">Tom</div>
+            <div class="agent-role">Engineering / Build</div>
+          </div>
+          <div class="agent-status live">Live</div>
+        </li>
+        <li class="agent-item">
+          <div class="agent-avatar">FE</div>
+          <div class="agent-info">
+            <div class="agent-name">Felix</div>
+            <div class="agent-role">Review / Verification</div>
+          </div>
+          <div class="agent-status live">Live</div>
+        </li>
+        <li class="agent-item">
+          <div class="agent-avatar">DA</div>
+          <div class="agent-info">
+            <div class="agent-name">David</div>
+            <div class="agent-role">Finance / Money</div>
+          </div>
+          <div class="agent-status">Planned</div>
+        </li>
+        <li class="agent-item">
+          <div class="agent-avatar">IR</div>
+          <div class="agent-info">
+            <div class="agent-name">Iris</div>
+            <div class="agent-role">Oversight</div>
+          </div>
+          <div class="agent-status">Planned</div>
+        </li>
+        <li class="agent-item">
+          <div class="agent-avatar">RE</div>
+          <div class="agent-info">
+            <div class="agent-name">Reeve</div>
+            <div class="agent-role">Security / Access</div>
+          </div>
+          <div class="agent-status">Planned</div>
+        </li>
+        <li class="agent-item">
+          <div class="agent-avatar">DB</div>
+          <div class="agent-info">
+            <div class="agent-name">Dr. Bayle</div>
+            <div class="agent-role">—</div>
+          </div>
+          <div class="agent-status">Pending</div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="section" aria-labelledby="ops-title">
+      <div class="section-header">
+        <h2 id="ops-title" class="section-title">Operations Feed</h2>
+        <span class="section-count">Live</span>
+      </div>
+      <ul class="feed">
+        <li class="feed-item">
+          <time class="feed-time" datetime="09:38">09:38:12</time>
+          <div class="feed-body">
+            <span class="feed-agent">Mia → Tom</span>
+            <span class="feed-action">Handoff: ROMEL phone app prototype approved for production.</span>
+          </div>
+        </li>
+        <li class="feed-item">
+          <time class="feed-time" datetime="09:35">09:35:47</time>
+          <div class="feed-body">
+            <span class="feed-agent">Noah</span>
+            <span class="feed-action">Captured: company phone app concept in public vault.</span>
+          </div>
+        </li>
+        <li class="feed-item">
+          <time class="feed-time" datetime="09:31">09:31:03</time>
+          <div class="feed-body">
+            <span class="feed-agent">Grace</span>
+            <span class="feed-action">Draft ready: access request notification queued.</span>
+          </div>
+        </li>
+        <li class="feed-item">
+          <time class="feed-time" datetime="09:28">09:28:55</time>
+          <div class="feed-body">
+            <span class="feed-agent">Felix</span>
+            <span class="feed-action">Verification: brand guardrails passed.</span>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <footer class="cta-area">
+      <button type="button" class="cta-button">Request access</button>
+      <p class="cta-note">Verification required · One access point</p>
+    </footer>
+  </main>
+</body>
+</html>
